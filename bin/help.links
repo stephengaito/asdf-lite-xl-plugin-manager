@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# This asdf shell script provides useful URLS for Lite-XL-plugin-manager (lpm)
+
+echo GitHub https://github.com/lite-xl/lite-xl-plugin-manager
+echo ""
+echo Lite-XL https://lite-xl.com/
+echo ""

@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# This asdf shell script provides a brief overview of Lite-XL-plugin-manger
+
+echo "The lite-xl plugin manager."
+echo ""

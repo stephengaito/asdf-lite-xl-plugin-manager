@@ -1,0 +1,7 @@
+#/bin/sh
+
+curl --silent \
+  --location https://api.github.com/repos/lite-xl/lite-xl-plugin-manager/releases \
+  | grep -v latest | grep -v continuous | grep tag_name \
+  | cut -d ":" -f 2 | tr -d "\"\," | tac \
+  | tr '\n' ' ' | tr -d 'v'

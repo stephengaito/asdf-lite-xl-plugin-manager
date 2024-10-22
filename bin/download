@@ -1,0 +1,63 @@
+#!/bin/sh
+
+# This asdf shell script downloads the correct version of the lite-xl
+# editor (all addons)
+
+# NOTE: at the moment this ONLY works on Linux using an Intel processor.
+
+trap 'rm -rf "$ASDF_LITEXL_TMPDIR"' EXIT
+
+ASDF_LITEXL_TMPDIR=$(mktemp -d /tmp/asdf-litexl-XXXXXX)
+ASDF_DOWNLOAD_PATH=${ASDF_DOWNLOAD_PATH-$ASDF_LITEXL_TMPDIR}
+SYSTEM=$(uname -s)
+CPU=$(uname -m)
+PLATFORM="unknown"
+
+case "$SYSTEM" in
+  Linux)
+    if command -v ldd >/dev/null && ldd --version 2>&1 | grep -E '^musl' >/dev/null
+    then
+      exit 1
+    else
+      PLATFORM="linux"
+    fi
+    ;;
+  *)
+    exit 1
+esac
+
+case "$CPU" in
+  i*86)
+    ;;
+  x86_64|ia64)
+    PLATFORM="x86_64-$PLATFORM"
+    ;;
+  *)
+    exit 1
+esac
+
+
+cd $ASDF_DOWNLOAD_PATH
+
+echo Platform: $PLATFORM
+
+litexlURL=$(curl --silent \
+  https://github.com/lite-xl/lite-xl-plugin-manager/releases/expanded_assets/v$ASDF_INSTALL_VERSION \
+  | grep $PLATFORM | grep href | tr ' ' '\n' | grep href | tr '=' '\n' \
+  | grep -v href | tr -d '"' )
+
+litexlFILE=$(basename $litexlURL)
+
+echo "Lite-xl-plugin-manager  URL: $litexlURL"
+echo "Lite-xl-plugin-manager FILE: $litexlFILE"
+
+
+wget https://github.com$litexlURL
+
+if test $? -ne 0
+then
+  rm $litexlFILE
+  exit 1
+else
+  mv $litexlFILE lpm
+fi
